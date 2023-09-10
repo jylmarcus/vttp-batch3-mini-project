@@ -1,0 +1,7 @@
+<form [formGroup]="searchForm" (ngSubmit)="submitForm()">
+  <input #originAutocomplete name="origin" placeholder="Origin" type="text" formControlName="origin">
+  <input #destinationAutocomplete name="destination" placeholder="Destination" type="text" formControlName="destination">
+  <input aria-label="date" [min]="currentDate" type="date" formControlName="date">
+  <input aria-label="departureTime" type="time" formControlName="time">
+  <button type="submit" [disabled]="searchForm.invalid">Search</button>
+</form>

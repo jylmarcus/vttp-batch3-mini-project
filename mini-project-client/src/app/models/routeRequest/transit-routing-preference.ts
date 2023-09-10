@@ -1,0 +1,5 @@
+export enum TransitRoutingPreference {
+  TRANSIT_ROUTING_PREFERENCE_UNSPECIFIED,
+  LESS_WALKING,
+  FEWER_TRANSFERS
+}

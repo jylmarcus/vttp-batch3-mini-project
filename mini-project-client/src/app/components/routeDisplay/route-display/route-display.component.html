@@ -1,0 +1,47 @@
+<div>
+  <span>{{originName}} - {{destinationName}} </span> <span>Depart: {{departureTime | date: 'dd/MM/yyyy, HH:mm'}}</span>
+</div>
+<div class="routeType" *ngIf="travelMode==RouteTravelMode.TRANSIT">
+  <div class="routeWrapper" *ngFor="let route of routes; index as i">
+    <div class="routeSummary">
+      <div class="routeNumber">Route {{i + 1}}</div>
+      <div class="routeSummaryDetails">{{departureTime | date :'HH:mm'}} → {{arrivalTimes[i] | date: 'HH:mm'}}</div>
+      <div class="routeSummaryActions">
+        <button (click)="saveRoute(i)">SaveIcon</button>
+      </div>
+    </div>
+    <div class="routeStepWrapper" *ngFor="let step of route.legs[0].stepsOverview.multiModalSegments; index as j">
+      <div *ngIf="step.travelMode == 'TRANSIT' ">
+        <div class="departureStop">
+          <div class="stopIcon"></div>
+          <div class="stopDetails">
+            <div class="departureTime">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.departureTime | date :'HH:mm'}}</div>
+            <div class="departureStopName">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.departureStop.name}}</div>
+          </div>
+          <div class="mapLink"></div>
+        </div>
+        <div class="transitInstruction">
+          <div class="transitInstructionIcon"></div>
+          <div class="instruction">{{route.legs[0].steps[step.stepStartIndex].transitDetails.transitLine.name}} {{route.legs[0].steps[step.stepStartIndex].navigationInstruction.instructions}} {{travelTimes[i][j]}} mins</div>
+        </div>
+        <div class="arrivalStop">
+          <div class="stopIcon"></div>
+          <div class="stopDetails">
+            <div class="arrivalTime">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.arrivalTime | date :'HH:mm'}}</div>
+            <div class="arrivalStopName">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.arrivalStop.name}}</div>
+          </div>
+          <div class="mapLink"></div>
+        </div>
+      </div>
+      <div *ngIf="step.travelMode =='WALK'">
+        <div class="transitInstruction">
+          <div class="instruction" *ngIf="step.hasOwnProperty('navigationInstruction'); else walk">{{step.navigationInstruction.instructions}}</div>
+          <ng-template #walk>Walk</ng-template>
+          <div class="time">{{travelTimes[i][j]}} mins</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button (click) = "goBack()">Back</button>
