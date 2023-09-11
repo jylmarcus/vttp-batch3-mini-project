@@ -6,6 +6,7 @@ import { RouteTravelMode } from '../models/routeRequest/route-travel-mode';
 import { RoutingPreference } from '../models/routeRequest/routing-preference';
 import { Observable, of } from 'rxjs';
 import { RouteRequestDocument } from '../models/routeRequest/route-request-document';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,47 +19,59 @@ export class RouteSearchService {
 
   currentRouteRequest!: RouteRequest;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authSvc: AuthenticationService) { }
 
   public findRoute(request: RouteRequest): Observable<any> {
 
-    let params = new HttpParams()
+    const params = new HttpParams()
                   .set('origin', request.origin.placeId)
                   .set('destination', request.destination.placeId)
                   .set('units', request.units!);
 
     if(request.departureTime != undefined) {
-      params = params.set('departureTime', request.departureTime);
+      params.set('departureTime', request.departureTime);
     }
 
     if(request.arrivalTime !=undefined) {
-      params = params.set('arrivalTime', request.arrivalTime);
+      params.set('arrivalTime', request.arrivalTime);
     }
 
     if(request.travelMode !=undefined) {
-      params = params.set('travelMode', request.travelMode);
+      params.set('travelMode', request.travelMode);
     }
 
     if(request.computeAlternativeRoutes !=undefined) {
-      params = params.set('computeAlternativeRoutes', request.computeAlternativeRoutes);
+      params.set('computeAlternativeRoutes', request.computeAlternativeRoutes);
     }
 
+    const headers = new HttpHeaders().set('content-type', 'application/json');
+    this.authSvc.addAuthorizationHeader(headers);
+
     const httpOptions = {
+      headers: headers,
       params: params
     }
-    return this.http.get<any>("/api/routeSearch", httpOptions);
+    return this.http.get<any>("/api/routes/routeSearch", httpOptions);
   }
 
   public saveRoute(request: RouteRequest, index: number): Observable<any>{
     const headers = new HttpHeaders().set('content-type', 'application/json');
+    this.authSvc.addAuthorizationHeader(headers);
     const body: RouteRequestDocument = {routeRequest: request, indexes: [index]};
-    return this.http.post<any>("/api/saveRoute", body, {headers: headers});
+    return this.http.post<any>("/api/routes/saveRoute", body, {headers: headers});
+  }
+
+  public getSavedRoutes(): Observable<any> {
+    const headers = new HttpHeaders();
+    this.authSvc.addAuthorizationHeader(headers);
+    return this.http.get<any>("/api/routes/savedRoutes", {headers: headers});
   }
 
   public updateSavedIndex(id: String, index: number) {
     const headers = new HttpHeaders().set('content-type', 'application/json');
+    this.authSvc.addAuthorizationHeader(headers);
     const body = JSON.stringify(index);
-    return this.http.post("/api/saveRoute/"+id, body, {headers: headers});
+    return this.http.put<any>("/api/routes/saveRoute/"+id, body, {headers: headers});
   }
 
   public createISOString(date:string, time: string) {

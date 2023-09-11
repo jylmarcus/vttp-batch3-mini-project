@@ -12,5 +12,6 @@ export class SavedRoutesComponent implements OnInit{
 
   ngOnInit(): void {
       //get saved routes by passing user id
+      console.log(this.routeSearchSvc.getSavedRoutes());
   }
 }

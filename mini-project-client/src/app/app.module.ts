@@ -9,13 +9,19 @@ import { SearchComponent } from './components/routeSearch/search/search.componen
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteDisplayComponent } from './components/routeDisplay/route-display/route-display.component';
 import { SavedRoutesComponent } from './components/savedRoutes/saved-routes/saved-routes.component';
+import { LoginComponent } from './components/login/login/login.component';
+import { RegisterComponent } from './components/register/register/register.component';
+import { LogoutComponent } from './components/logout/logout/logout.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchComponent,
     RouteDisplayComponent,
-    SavedRoutesComponent
+    SavedRoutesComponent,
+    LoginComponent,
+    RegisterComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
