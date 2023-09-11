@@ -3,15 +3,18 @@ package project.mini.batch3.vttp.miniprojectserver.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import project.mini.batch3.vttp.miniprojectserver.models.RouteRequestDocument;
+import project.mini.batch3.vttp.miniprojectserver.models.UserDto;
 import project.mini.batch3.vttp.miniprojectserver.models.routeRequest.RouteRequest;
 import project.mini.batch3.vttp.miniprojectserver.models.routeRequest.Waypoint;
 import project.mini.batch3.vttp.miniprojectserver.models.routeRequest.enums.RouteTravelMode;
@@ -19,7 +22,7 @@ import project.mini.batch3.vttp.miniprojectserver.models.routeRequest.enums.Rout
 import project.mini.batch3.vttp.miniprojectserver.services.TravelService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/routes")
 public class RouteSearchController {
 
     @Autowired
@@ -60,8 +63,9 @@ public class RouteSearchController {
     }
 
     @GetMapping(path = "/savedRoutes", produces="application/json")
-    public ResponseEntity<String> getSavedRoutes() {
-        String userId = "123"; //TODO - Implement user logins
+    public ResponseEntity<String> getSavedRoutes(Authentication authentication) {
+        UserDto user = (UserDto)authentication.getPrincipal();
+        String userId = user.getId();
         try {
             String resp = travelSvc.getSavedRoutes(userId);
             return ResponseEntity.ok().body(resp);
@@ -71,9 +75,11 @@ public class RouteSearchController {
     }
 
     @PostMapping(path = "/saveRoute", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<String> saveRoute(@RequestBody RouteRequestDocument request) {
+    public ResponseEntity<String> saveRoute(@RequestBody RouteRequestDocument request, Authentication authentication) {
+        UserDto user = (UserDto)authentication.getPrincipal();
+        String userId = user.getId();
         try {
-            String objId = travelSvc.saveRoute(request);
+            String objId = travelSvc.saveRoute(request, userId);
             String resp = "{\"objId\": \"" + objId + "\"}";
             return ResponseEntity.status(HttpStatus.CREATED).body(resp);
         } catch (Exception ex) {
@@ -81,7 +87,7 @@ public class RouteSearchController {
         }
     }
 
-    @PostMapping(path = "/saveRoute/{id}", consumes = "application/json", produces = "application/json")
+    @PutMapping(path = "/saveRoute/{id}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> updateRouteIndex(@PathVariable String id, @RequestBody Integer index) {
         try {
             travelSvc.updateRouteIndex(id, index);
