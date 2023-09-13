@@ -1,11 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
+  private authTokenSubject = new BehaviorSubject<string | null>(this.getAuthToken());
+
+  authToken$: Observable<string | null> = this.authTokenSubject.asObservable()
 
   constructor(private http: HttpClient) { }
 
@@ -19,12 +22,13 @@ export class AuthenticationService {
     } else {
       window.localStorage.removeItem("auth_token");
     }
+    this.authTokenSubject.next(token);
   }
 
   public login(input: any): Observable<any> {
     const headers = new HttpHeaders().set('content-type', 'application/json');
-    this.addAuthorizationHeader(headers);
-    return this.http.post<any>("/api/auth/login", input, {headers: headers});
+    const headersWithAuth = this.addAuthorizationHeader(headers);
+    return this.http.post<any>("/api/auth/login", input, {headers: headersWithAuth});
     //.subscribe(
     //  (response) => {
     //    this.setAuthToken(response.data.token);
@@ -36,13 +40,14 @@ export class AuthenticationService {
 
   public register(input: any): Observable<any> {
     const headers = new HttpHeaders().set('content-type', 'application/json');
-    this.addAuthorizationHeader(headers);
-    return this.http.post<any>("/api/auth/register", input, {headers: headers});
+    const headersWithAuth = this.addAuthorizationHeader(headers);
+    return this.http.post<any>("/api/auth/register", input, {headers: headersWithAuth});
   }
 
   public addAuthorizationHeader(headers: HttpHeaders) {
     if(this.getAuthToken() !== null) {
-      headers.set('Authorization', 'Bearer ' + this.getAuthToken());
+      return headers.set('Authorization', 'Bearer ' + this.getAuthToken());
     }
+    return headers;
   }
 }

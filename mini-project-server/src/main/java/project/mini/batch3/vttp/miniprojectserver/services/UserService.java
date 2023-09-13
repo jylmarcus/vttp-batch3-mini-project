@@ -35,7 +35,7 @@ public class UserService{
             char[] charPw = password.toCharArray();
 
             if(securityConfig.passwordEncoder().matches(CharBuffer.wrap(charPw), user.getEnc_password())) {
-                UserDto userDto = UserDto.builder().id(user.getId()).username(user.getUsername()).build();
+                UserDto userDto = UserDto.builder().id(user.getUser_id()).username(user.getUsername()).build();
                 return userDto;
             }
             throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
@@ -55,7 +55,7 @@ public class UserService{
 
         userRepo.insertNewUser(user);
 
-        UserDto userDto = UserDto.builder().id(user.getId()).username(user.getUsername()).build();
+        UserDto userDto = UserDto.builder().id(user.getUser_id()).username(user.getUsername()).build();
 
         return userDto;
     }

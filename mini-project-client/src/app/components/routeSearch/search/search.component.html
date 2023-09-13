@@ -1,7 +1,36 @@
-<form [formGroup]="searchForm" (ngSubmit)="submitForm()">
-  <input #originAutocomplete name="origin" placeholder="Origin" type="text" formControlName="origin">
-  <input #destinationAutocomplete name="destination" placeholder="Destination" type="text" formControlName="destination">
-  <input aria-label="date" [min]="currentDate" type="date" formControlName="date">
-  <input aria-label="departureTime" type="time" formControlName="time">
-  <button type="submit" [disabled]="searchForm.invalid">Search</button>
+<form class="searchForm" [formGroup]="searchForm" (ngSubmit)="submitForm()">
+  <div class="formInput">
+    <label class="inputLabel" for="origin">From</label>
+    <mat-form-field>
+      <input matInput #originAutocomplete name="origin" aria-label="origin" type="text" formControlName="origin">
+    </mat-form-field>
+  </div>
+  <div class="formInput">
+    <label class="inputLabel" for="destination">To</label>
+    <mat-form-field>
+      <input matInput #destinationAutocomplete name="destination" aria-label="destination" type="text" formControlName="destination">
+    </mat-form-field>
+  </div>
+  <div class="formInput">
+    <label class="inputLabel" for="date">Date</label>
+    <mat-form-field>
+      <input matInput [matDatetimepicker]="datePicker" aria-label="date" [min]="currentDate" formControlName="date">
+      <mat-hint>YYYY-MM-DD</mat-hint>
+      <mat-datetimepicker-toggle matIconSuffix [for]="datePicker"></mat-datetimepicker-toggle>
+      <mat-datetimepicker #datePicker type="date"></mat-datetimepicker>
+    </mat-form-field>
+  </div>
+  <div class="formInput">
+    <label class="inputLabel" for="time">Time</label>
+    <mat-form-field>
+      <input matInput [matDatetimepicker]="timePicker" aria-label="time" formControlName="time">
+      <mat-hint>HH:mm:ss</mat-hint>
+      <mat-datetimepicker-toggle matIconSuffix [for]="timePicker"></mat-datetimepicker-toggle>
+      <mat-datetimepicker #timePicker type="time"></mat-datetimepicker>
+    </mat-form-field>
+  </div>
+  <button class="formButton" mat-raised-button color="primary" type="submit" [disabled]="searchForm.invalid">
+    <mat-icon>search</mat-icon>
+    Search
+  </button>
 </form>

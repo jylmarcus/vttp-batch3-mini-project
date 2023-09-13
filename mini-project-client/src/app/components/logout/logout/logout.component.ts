@@ -13,6 +13,6 @@ export class LogoutComponent implements OnInit{
 
   ngOnInit(): void {
       this.authSvc.setAuthToken(null);
-      this.router.navigate(['login']);
+      this.router.navigate(['']);
   }
 }

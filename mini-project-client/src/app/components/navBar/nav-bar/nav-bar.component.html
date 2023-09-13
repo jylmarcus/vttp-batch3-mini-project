@@ -1,0 +1,19 @@
+<mat-toolbar color="primary">
+    <a mat-button [routerLink]="['']">Home</a>
+    <a mat-button [routerLink]="['/routes/search']">Search Routes</a>
+    <a mat-button [routerLink]="['/routes/savedRoutes']">Saved Routes</a>
+    <span class="flex-spacer"></span>
+    <button *ngIf="isLoggedIn; else logIn" mat-button [matMenuTriggerFor]="menu">
+       <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu  #menu="matMenu">
+        <button mat-menu-item (click)="logout()">
+            Logout
+        </button>
+
+    </mat-menu>
+    <ng-template #logIn>
+      <a mat-button (click)="openLoginDialog()">Login</a>
+    </ng-template>
+</mat-toolbar>

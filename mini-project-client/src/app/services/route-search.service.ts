@@ -23,32 +23,31 @@ export class RouteSearchService {
 
   public findRoute(request: RouteRequest): Observable<any> {
 
-    const params = new HttpParams()
+    let params = new HttpParams()
                   .set('origin', request.origin.placeId)
                   .set('destination', request.destination.placeId)
                   .set('units', request.units!);
 
-    if(request.departureTime != undefined) {
-      params.set('departureTime', request.departureTime);
+    if(request.departureTime != null) {
+      params = params.set('departureTime', request.departureTime);
     }
 
     if(request.arrivalTime !=undefined) {
-      params.set('arrivalTime', request.arrivalTime);
+      params = params.set('arrivalTime', request.arrivalTime);
     }
 
     if(request.travelMode !=undefined) {
-      params.set('travelMode', request.travelMode);
+      params = params.set('travelMode', request.travelMode);
     }
 
     if(request.computeAlternativeRoutes !=undefined) {
-      params.set('computeAlternativeRoutes', request.computeAlternativeRoutes);
+      params = params.set('computeAlternativeRoutes', request.computeAlternativeRoutes);
     }
 
     const headers = new HttpHeaders().set('content-type', 'application/json');
-    this.authSvc.addAuthorizationHeader(headers);
-
+    const headersWithAuth = this.authSvc.addAuthorizationHeader(headers);
     const httpOptions = {
-      headers: headers,
+      headers: headersWithAuth,
       params: params
     }
     return this.http.get<any>("/api/routes/routeSearch", httpOptions);
@@ -56,22 +55,29 @@ export class RouteSearchService {
 
   public saveRoute(request: RouteRequest, index: number): Observable<any>{
     const headers = new HttpHeaders().set('content-type', 'application/json');
-    this.authSvc.addAuthorizationHeader(headers);
+    const headersWithAuth = this.authSvc.addAuthorizationHeader(headers);
     const body: RouteRequestDocument = {routeRequest: request, indexes: [index]};
-    return this.http.post<any>("/api/routes/saveRoute", body, {headers: headers});
+    return this.http.post<any>("/api/routes/saveRoute", body, {headers: headersWithAuth});
   }
 
   public getSavedRoutes(): Observable<any> {
     const headers = new HttpHeaders();
-    this.authSvc.addAuthorizationHeader(headers);
-    return this.http.get<any>("/api/routes/savedRoutes", {headers: headers});
+    const headersWithAuth = this.authSvc.addAuthorizationHeader(headers);
+    return this.http.get<any>("/api/routes/savedRoutes", {headers: headersWithAuth});
   }
 
   public updateSavedIndex(id: String, index: number) {
     const headers = new HttpHeaders().set('content-type', 'application/json');
-    this.authSvc.addAuthorizationHeader(headers);
+    const headersWithAuth = this.authSvc.addAuthorizationHeader(headers);
     const body = JSON.stringify(index);
-    return this.http.put<any>("/api/routes/saveRoute/"+id, body, {headers: headers});
+    return this.http.put<any>("/api/routes/saveRoute/"+id, body, {headers: headersWithAuth});
+  }
+
+  public deleteSavedRoute(id: String, index: number) {
+    const headers = new HttpHeaders().set('content-type', 'application/json');
+    const headersWithAuth = this.authSvc.addAuthorizationHeader(headers);
+    const body = JSON.stringify(index);
+    return this.http.delete("/api/routes/deleteRoute/"+id, {headers: headersWithAuth, body: body});
   }
 
   public createISOString(date:string, time: string) {
@@ -83,11 +89,11 @@ export class RouteSearchService {
     let arrivals=[];
     for(let route of routes) {
       let addedTime = Number(route.localizedValues.duration.text.split(' ')[0]);
-      let arrivalTime = new Date();
+      let arrivalTime = new Date(departTime);
       arrivalTime.setMinutes(time.getMinutes()+addedTime);
       arrivals.push(arrivalTime);
     }
-    return arrivals
+    return arrivals;
   }
 
   public computeTravelTimes(routes: any) {
@@ -108,5 +114,17 @@ export class RouteSearchService {
       travelTimes.push(stepTravelTimes);
     }
     return travelTimes;
+  }
+
+  public computeTotalTravelTimes(travelTimes: number[][]) {
+    let totalTravelTimes = [];
+    for(let routeTravelTimes of travelTimes) {
+      let totalTime = 0;
+      for(let travelTime of routeTravelTimes) {
+        totalTime += travelTime;
+      }
+      totalTravelTimes.push(totalTime);
+    }
+    return totalTravelTimes;
   }
 }

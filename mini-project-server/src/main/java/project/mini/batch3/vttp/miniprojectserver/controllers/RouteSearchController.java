@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +53,7 @@ public class RouteSearchController {
                         : RoutingPreference.ROUTING_PREFERENCE_UNSPECIFIED,
                 departureTime != null ? departureTime : null,
                 arrivalTime != null ? arrivalTime : null,
-                computeAlternativeRoutes ? true : false,
+                true,
                 units);
         try {
             String resp = travelSvc.queryRoutes(request);
@@ -62,13 +63,13 @@ public class RouteSearchController {
         }
     }
 
-    @GetMapping(path = "/savedRoutes", produces="application/json")
+    @GetMapping(path = "/savedRoutes", produces="text/html")
     public ResponseEntity<String> getSavedRoutes(Authentication authentication) {
         UserDto user = (UserDto)authentication.getPrincipal();
         String userId = user.getId();
         try {
-            String resp = travelSvc.getSavedRoutes(userId);
-            return ResponseEntity.ok().body(resp);
+            String requests = travelSvc.getSavedRoutes(userId);
+            return ResponseEntity.ok().body(requests);
         } catch (Exception ex) {
             return ResponseEntity.status(404).body("Not found");
         }
@@ -95,6 +96,19 @@ public class RouteSearchController {
             return ResponseEntity.ok().body(resp);
         } catch (Exception ex) {
             return ResponseEntity.status(400).body("Unable to save route");
+        }
+    }
+
+    @DeleteMapping(path="/deleteRoute/{id}", consumes ="application/json", produces = "application/json")
+    public ResponseEntity<String> deleteRoute(@PathVariable String id, @RequestBody Integer index, Authentication authentication) {
+        UserDto user = (UserDto) authentication.getPrincipal();
+        String userId = user.getId();
+        try{
+            travelSvc.deleteRoute(id, index, userId);
+            String resp = "{\"message\": \"Route deleted successfully\", \"index\":" + index + "}";
+            return ResponseEntity.ok().body(resp);
+        } catch (Exception ex) {
+            return ResponseEntity.status(400).body(ex.getMessage());
         }
     }
 }

@@ -1,7 +1,41 @@
-<h2>Login</h2>
-<form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
-  <input type="text" name="username" placeholder="username" formControlName="username" />
-  <input type="password" name="password" placeholder="password" formControlName="password" />
-  <button type="submit" [disabled]="loginForm.invalid">Login</button>
-</form>
-<button type="button" (click)="goToRegistration()">Register</button>
+
+    <mat-tab-group dynamicHeight #tabGroup>
+      <mat-tab label="Login">
+        <div class="tab-content">
+          <form class="form, width80" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit($event)">
+            <mat-form-field class="full-width">
+              <input matInput type="text" name="username" placeholder="Username" formControlName="username" />
+              <mat-error *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.hasError('required')">Username is required</mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+              <input matInput type="password" name="password" placeholder="Password" formControlName="password" />
+              <mat-error *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">Password is required</mat-error>
+            </mat-form-field>
+            <div class="button-container">
+              <button mat-raised-button color="primary" type="button" (click)="onLoginSubmit($event)" [disabled]="loginForm.invalid">Login</button>
+              <button mat-raised-button type="button" (click)="onCancelClick()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Register">
+        <div class="tab-content">
+          <form class="form, width80" [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit($event)">
+            <mat-form-field class="full-width">
+              <input matInput type="text" name="username" placeholder="Username" formControlName="username" />
+              <mat-error *ngIf="registrationForm.get('username')?.touched && registrationForm.get('username')?.hasError('required')">Username is required</mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+              <input matInput type="password" name="password" placeholder="Password" formControlName="password" />
+              <mat-error *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.hasError('required')">Password is required</mat-error>
+            </mat-form-field>
+            <div class="button-container">
+              <button mat-raised-button color="primary" type="button" (click)="onRegistrationSubmit($event)" [disabled]="registrationForm.invalid">Register</button>
+              <button mat-raised-button type="button" (click)="onCancelClick()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+

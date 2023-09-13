@@ -38,6 +38,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
 
 
 @NgModule({
@@ -55,6 +56,7 @@ import { MatTreeModule } from '@angular/material/tree';
     MatChipsModule,
     MatStepperModule,
     MatDatepickerModule,
+    MatDatetimepickerModule,
     MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
@@ -85,6 +87,6 @@ import { MatTreeModule } from '@angular/material/tree';
   declarations: [],
   imports: [
     CommonModule
-  ]
+  ],
 })
 export class MaterialModule { }

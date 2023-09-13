@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouteSearchService } from 'src/app/services/route-search.service';
 import { RouteTravelMode } from 'src/app/models/routeRequest/route-travel-mode';
+import { Moment } from 'moment';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-search',
@@ -28,7 +30,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
   destinationPlace!: google.maps.places.PlaceResult;
 
   searchForm!: FormGroup;
-  currentDate: string = new Date().toLocaleDateString('fr-ca');
+  currentDate: string = new Date().toLocaleDateString('en-ca');
   currentTime: string = new Date().toLocaleTimeString('it-it');
   departureArrivalFlag: boolean = true; //true for departure, false for arrival
   travelMode: RouteTravelMode = RouteTravelMode.TRANSIT;
@@ -77,7 +79,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
         destinationName: this.destinationPlace.name,
         time: this.routeSearchSvc.createISOString(
           this.searchForm.get('date')?.value,
-          this.searchForm.get('time')?.value
+          new Date(this.searchForm.get('time')?.value.valueOf()).toLocaleTimeString('it-it')
         ),
         flag: this.departureArrivalFlag,
         travelMode: this.travelMode.valueOf(),

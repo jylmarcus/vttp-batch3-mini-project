@@ -1,6 +1,7 @@
 package project.mini.batch3.vttp.miniprojectserver.models.routeRequest;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import project.mini.batch3.vttp.miniprojectserver.models.routeRequest.enums.RouteTravelMode;
@@ -9,6 +10,7 @@ import project.mini.batch3.vttp.miniprojectserver.models.routeRequest.enums.Rout
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class RouteRequest {
     
     Waypoint origin;

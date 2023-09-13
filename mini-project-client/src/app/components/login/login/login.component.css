@@ -1,0 +1,30 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.width80 {
+  width: 80%;
+}
+
+.tab-content{
+  display: flex;
+  justify-content: center;
+  flex: 1 0 auto;
+  height: 100%;
+  padding: 1rem
+}
+
+.form {
+  height: auto;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}

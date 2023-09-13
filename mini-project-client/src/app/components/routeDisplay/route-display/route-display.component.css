@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h2 {
+  margin: 0;
+}
+
+.routeDisplay, .headerButton {
+  padding: 1rem;
+}
+
+.routeDisplayHeader {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.routeQuery {
+  font-size: larger;
+  margin-bottom: 1rem;
+}
+
+.routeWrapper {
+  margin-bottom: 3rem;
+}
+
+.routeSummary {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgb(248, 204, 122);
+}
+
+.routeNumber {
+  display: flex;
+  background-color: #3f51b5;
+  color: white;
+  height: 4rem;
+  font-size: larger;
+  text-align: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.routeSummaryDetails {
+  display: flex;
+  align-items: center;
+}
+
+.routeStartAndEndTime {
+  font-size: x-large;
+}
+
+.routeTimeTaken, .departureTime, .departureStopName, .arrivalTime, .arrivalStopName, .transitDetails, .transitTime, .walkInstruction, .walkTime, .destinationText {
+  font-size: large;
+}
+
+.departureStop, .arrivalStop {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: lightblue;
+}
+
+.stopIcon {
+  display: flex;
+  justify-content: center;
+}
+
+.stopIconImage {
+  padding-left: 0.2rem;
+}
+
+.stopDetails {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+}
+
+.transitInstruction {
+  display: flex;
+  align-items: center;
+  width: 50%;
+}
+
+.transitInstructionIcon {
+  width: 2rem;
+  height: 50px;
+  background-image: linear-gradient(#000, #000);
+  background-size: 5px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.instruction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.walkIcon {
+  padding-left: 0.2rem;
+  font-size: x-large;
+}
+
+.walkStep, .arriveAtDestination {
+  display: flex;
+  align-items:center;
+  width:50%;
+  justify-content: space-between;
+}
+
+.walkStep {
+  background-color: lightgrey;
+}
+
+.walkDetails{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.arriveAtDestination {
+  padding-left: 0.5rem;
+  background-color: #3f51b5;
+  color: white;
+}

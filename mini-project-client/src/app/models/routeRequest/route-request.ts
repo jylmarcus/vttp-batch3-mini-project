@@ -7,8 +7,8 @@ export interface RouteRequest {
   destination: {placeId: string}
   travelMode: RouteTravelMode
   routingPreference?: RoutingPreference
-  departureTime?: string
-  arrivalTime?: string
+  departureTime: string | null
+  arrivalTime: string | null
   computeAlternativeRoutes: boolean
   units?: string
 }

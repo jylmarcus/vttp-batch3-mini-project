@@ -1,1 +1,9 @@
-<p>saved-routes works!</p>
+<div class="requestWrapper" *ngFor="let request of savedRequests; index as i">
+  <div class="requestSummary">
+    <div class="countSavedRoutes">Saved Routes <br> {{request.indexes.length}}</div>
+    <div class="requestedRoute fontLarge">{{request.request.origin.placeName}} → {{request.request.destination.placeName}}</div>
+    <div class="date fontLarge">{{request.request.departureTime | date:'dd/MM/yyyy'}}</div>
+    <button class="proceedButton" mat-icon-button color="accent" (click)="showSavedRoutes(i)"><mat-icon>keyboard_arrow_right</mat-icon></button>
+  </div>
+</div>
+<div class="noSavedRoutes" *ngIf="savedRequests == undefined || savedRequests.length==0 "><h2>You do not have any saved routes. </h2></div>

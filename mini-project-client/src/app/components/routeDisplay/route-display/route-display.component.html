@@ -1,47 +1,225 @@
-<div>
-  <span>{{originName}} - {{destinationName}} </span> <span>Depart: {{departureTime | date: 'dd/MM/yyyy, HH:mm'}}</span>
-</div>
-<div class="routeType" *ngIf="travelMode==RouteTravelMode.TRANSIT">
-  <div class="routeWrapper" *ngFor="let route of routes; index as i">
-    <div class="routeSummary">
-      <div class="routeNumber">Route {{i + 1}}</div>
-      <div class="routeSummaryDetails">{{departureTime | date :'HH:mm'}} → {{arrivalTimes[i] | date: 'HH:mm'}}</div>
-      <div class="routeSummaryActions">
-        <button (click)="saveRoute(i)">SaveIcon</button>
-      </div>
-    </div>
-    <div class="routeStepWrapper" *ngFor="let step of route.legs[0].stepsOverview.multiModalSegments; index as j">
-      <div *ngIf="step.travelMode == 'TRANSIT' ">
-        <div class="departureStop">
-          <div class="stopIcon"></div>
-          <div class="stopDetails">
-            <div class="departureTime">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.departureTime | date :'HH:mm'}}</div>
-            <div class="departureStopName">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.departureStop.name}}</div>
+<div class="routeDisplay">
+  <div class="routeDisplayHeader">
+    <h2>Search Results</h2>
+    <button class="headerButton" mat-raised-button color="primary" type="button" (click)="goBack()">
+      <mat-icon>search</mat-icon>
+      Search again
+    </button>
+  </div>
+  <div class="routeQuery">
+    <div>{{ originName }} - {{ destinationName }} </div>
+    <div>Depart: {{ departureTime | date : "dd/MM/yyyy, HH:mm" }}</div>
+  </div>
+
+  <div class="checkForIndexes" *ngIf = "savedRouteIndexes == undefined || savedRouteIndexes == null">
+    <div class="routeType" *ngIf="travelMode == RouteTravelMode.TRANSIT">
+      <div class="routeWrapper" *ngFor="let route of routes; index as i">
+        <div class="routeSummary">
+          <div class="routeSummaryDetails">
+            <div class="routeNumber">Route <br> {{ i + 1 }}</div>
+            <div class="routeStartAndEndTime">
+              {{ departureTime | date : "HH:mm" }} →
+              {{ arrivalTimes[i] | date : "HH:mm" }}
+            </div>
           </div>
-          <div class="mapLink"></div>
-        </div>
-        <div class="transitInstruction">
-          <div class="transitInstructionIcon"></div>
-          <div class="instruction">{{route.legs[0].steps[step.stepStartIndex].transitDetails.transitLine.name}} {{route.legs[0].steps[step.stepStartIndex].navigationInstruction.instructions}} {{travelTimes[i][j]}} mins</div>
-        </div>
-        <div class="arrivalStop">
-          <div class="stopIcon"></div>
-          <div class="stopDetails">
-            <div class="arrivalTime">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.arrivalTime | date :'HH:mm'}}</div>
-            <div class="arrivalStopName">{{route.legs[0].steps[step.stepStartIndex].transitDetails.stopDetails.arrivalStop.name}}</div>
+          <div class="routeTimeTaken">{{totalTravelTimes[i]}} mins</div>
+          <div class="routeSummaryActions">
+            <button mat-icon-button color="accent" (click)="saveRoute(i)"><mat-icon>save_alt</mat-icon></button>
           </div>
-          <div class="mapLink"></div>
         </div>
-      </div>
-      <div *ngIf="step.travelMode =='WALK'">
-        <div class="transitInstruction">
-          <div class="instruction" *ngIf="step.hasOwnProperty('navigationInstruction'); else walk">{{step.navigationInstruction.instructions}}</div>
-          <ng-template #walk>Walk</ng-template>
-          <div class="time">{{travelTimes[i][j]}} mins</div>
+        <div class="routeStepWrapper" *ngFor="let step of route.legs[0].stepsOverview.multiModalSegments; index as j">
+          <div *ngIf="step.travelMode == 'TRANSIT'">
+            <div class="departureStop">
+              <div class="stopIcon">
+                <img class="stopIconImage" src="{{route.legs[0].steps[step.stepStartIndex].transitDetails.transitLine.vehicle.iconUri}}" alt="travelMode">
+              </div>
+              <div class="stopDetails">
+                <div class="departureTime">
+                  {{
+                    route.legs[0].steps[step.stepStartIndex].transitDetails
+                      .stopDetails.departureTime | date : "HH:mm"
+                  }}
+                </div>
+                <div class="departureStopName">
+                  {{
+                    route.legs[0].steps[step.stepStartIndex].transitDetails
+                      .stopDetails.departureStop.name
+                  }}
+                </div>
+              </div>
+              <div class="mapLink">
+                <button mat-icon-button color="accent"><mat-icon>map</mat-icon></button>
+              </div>
+            </div>
+            <div class="transitInstruction" [style.background-color] ="(route.legs[0].steps[step.stepStartIndex].transitDetails
+              .transitLine.color)" [style.color] = "(route.legs[0].steps[step.stepStartIndex].transitDetails
+              .transitLine.textColor)" >
+              <div class="transitInstructionIcon"></div>
+              <div class="instruction">
+                <div class="transitDetails">
+                  <div>
+                    {{
+                      route.legs[0].steps[step.stepStartIndex].transitDetails
+                        .transitLine.name
+                    }}
+                  </div>
+                  <div>
+                    {{
+                      route.legs[0].steps[step.stepStartIndex].navigationInstruction
+                        .instructions
+                    }}
+                  </div>
+                </div>
+                <div class="transitTime">{{ travelTimes[i][j] }} mins</div>
+              </div>
+            </div>
+            <div class="arrivalStop">
+              <div class="stopIcon">
+                <img src="{{route.legs[0].steps[step.stepStartIndex].transitDetails.transitLine.vehicle.iconUri}}" alt="" class="stopIconImage">
+              </div>
+              <div class="stopDetails">
+                <div class="arrivalTime">
+                  {{
+                    route.legs[0].steps[step.stepStartIndex].transitDetails
+                      .stopDetails.arrivalTime | date : "HH:mm"
+                  }}
+                </div>
+                <div class="arrivalStopName">
+                  {{
+                    route.legs[0].steps[step.stepStartIndex].transitDetails
+                      .stopDetails.arrivalStop.name
+                  }}
+                </div>
+              </div>
+              <div class="mapLink">
+                <button mat-icon-button color="accent"><mat-icon>map</mat-icon></button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="step.travelMode == 'WALK'">
+            <div class="walkStep">
+              <div class="walkDetails" *ngIf="step.hasOwnProperty('navigationInstruction'); else walk">
+                <mat-icon class="walkIcon"> directions_walk</mat-icon>
+                <div class="walkInstruction">{{ step.navigationInstruction.instructions }}</div>
+              </div>
+              <ng-template #walk>
+                <div class="walkDetails">
+                  <mat-icon class="walkIcon"> directions_walk</mat-icon> <div class="walkInstruction">Walk</div>
+                </div>
+              </ng-template>
+              <div class="walkTime">{{ travelTimes[i][j] }} mins</div>
+            </div>
+          </div>
+        </div>
+        <div class="arriveAtDestination">
+          <div class="destinationText">Arrive at {{ destinationName }}</div>
+          <button mat-icon-button color="accent"><mat-icon>map</mat-icon></button>
         </div>
       </div>
     </div>
   </div>
+  <div class="checkForIndexes" *ngIf="savedRouteIndexes != undefined && savedRouteIndexes.length > 0">
+    <div class="routeWrapper" *ngFor="let index of savedRouteIndexes; index as i">
+      <div class="routeSummary">
+        <div class="routeSummaryDetails">
+          <div class="routeNumber">Route <br> {{ i + 1 }}</div>
+          <div class="routeStartAndEndTime">
+            {{ departureTime ? (departureTime | date : "HH:mm" ) : '' }} →
+            {{ arrivalTimes[index] | date : "HH:mm" }}
+          </div>
+        </div>
+        <div class="routeTimeTaken">{{totalTravelTimes[index]}} mins</div>
+        <div class="routeSummaryActions">
+          <button mat-icon-button color="warn" (click)="deleteRoute(i)"><mat-icon>delete</mat-icon></button>
+        </div>
+      </div>
+      <div class="routeStepWrapper" *ngFor="let step of routes[index].legs[0].stepsOverview.multiModalSegments;index as j">
+        <div *ngIf="step.travelMode == 'TRANSIT'">
+          <div class="departureStop">
+            <div class="stopIcon">
+              <img src="{{routes[index].legs[0].steps[step.stepStartIndex].transitDetails.transitLine.vehicle.iconUri}}" alt="travelMode" class="stopIconImage">
+            </div>
+            <div class="stopDetails">
+              <div class="departureTime">
+                {{
+                  routes[index].legs[0].steps[step.stepStartIndex].transitDetails
+                    .stopDetails.departureTime | date : "HH:mm"
+                }}
+              </div>
+              <div class="departureStopName">
+                {{
+                  routes[index].legs[0].steps[step.stepStartIndex].transitDetails
+                    .stopDetails.departureStop.name
+                }}
+              </div>
+            </div>
+            <div class="mapLink">
+              <button mat-icon-button color="accent"><mat-icon>map</mat-icon></button>
+            </div>
+          </div>
+          <div class="transitInstruction" [style.background-color]="(routes[index].legs[0].steps[step.stepStartIndex].transitDetails.transitLine.color)" [style.color] = "(routes[index].legs[0].steps[step.stepStartIndex].transitDetails.transitLine.textColor)">
+            <div class="transitInstructionIcon"></div>
+            <div class="instruction">
+              <div class="transitDetails">
+                <div>
+                  {{
+                    routes[index].legs[0].steps[step.stepStartIndex].transitDetails
+                      .transitLine.name
+                  }}
+                </div>
+                <div>
+                  {{
+                    routes[index].legs[0].steps[step.stepStartIndex].navigationInstruction
+                      .instructions
+                  }}
+                </div>
+              </div>
+              <div class="transitTime">{{ travelTimes[index][j] }} mins</div>
+            </div>
+          </div>
+          <div class="arrivalStop">
+            <div class="stopIcon">
+              <img src="{{routes[index].legs[0].steps[step.stepStartIndex].transitDetails.transitLine.vehicle.iconUri}}" alt="travelMode" class="stopIconImage">
+            </div>
+            <div class="stopDetails">
+              <div class="arrivalTime">
+                {{
+                  routes[index].legs[0].steps[step.stepStartIndex].transitDetails
+                    .stopDetails.arrivalTime | date : "HH:mm"
+                }}
+              </div>
+              <div class="arrivalStopName">
+                {{
+                  routes[index].legs[0].steps[step.stepStartIndex].transitDetails
+                    .stopDetails.arrivalStop.name
+                }}
+              </div>
+            </div>
+            <div class="mapLink">
+              <button mat-icon-button color="accent"><mat-icon>map</mat-icon></button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="step.travelMode == 'WALK'">
+          <div class="walkStep">
+            <div class="walkDetails" *ngIf="step.hasOwnProperty('navigationInstruction'); else walk">
+              <mat-icon class="walkIcon"> directions_walk</mat-icon>
+              <div class="walkInstruction">{{ step.navigationInstruction.instructions }}</div>
+            </div>
+            <ng-template #walk>
+              <div class="walkDetails">
+                <mat-icon class="walkIcon"> directions_walk</mat-icon>
+                <div class="walkInstruction">Walk</div>
+              </div>
+            </ng-template>
+            <div class="walkTime">{{ travelTimes[index][j] }} mins</div>
+          </div>
+        </div>
+      </div>
+      <div class="arriveAtDestination">
+        <div class="destinationText">Arrive at {{ destinationName }}</div>
+        <button mat-icon-button color="accent"><mat-icon>map</mat-icon></button>
+      </div>
+    </div>
+  </div>
 </div>
-
-<button (click) = "goBack()">Back</button>

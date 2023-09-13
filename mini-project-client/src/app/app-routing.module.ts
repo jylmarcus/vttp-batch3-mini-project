@@ -5,11 +5,14 @@ import { RouteDisplayComponent } from './components/routeDisplay/route-display/r
 import { LoginComponent } from './components/login/login/login.component';
 import { RegisterComponent } from './components/register/register/register.component';
 import { LogoutComponent } from './components/logout/logout/logout.component';
+import { SavedRoutesComponent } from './components/savedRoutes/saved-routes/saved-routes.component';
+import { HomeComponent } from './components/home/home/home.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: '/login', pathMatch: 'full'},
+  {path: '', component:HomeComponent},
   {path: 'routes/search', component: SearchComponent},
   {path: 'routes/results', component: RouteDisplayComponent},
+  {path: 'routes/savedRoutes', component: SavedRoutesComponent},
   {path: 'login', component: LoginComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'logout', component: LogoutComponent}

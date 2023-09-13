@@ -15,4 +15,5 @@ public class User {
     private String username;
     private String password;
     private String enc_password;
+    private String user_id;
 }
