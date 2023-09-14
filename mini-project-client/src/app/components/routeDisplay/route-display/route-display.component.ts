@@ -106,7 +106,7 @@ export class RouteDisplayComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate(['routes/search']);
   }
 
   viewSavedRoutes() {
