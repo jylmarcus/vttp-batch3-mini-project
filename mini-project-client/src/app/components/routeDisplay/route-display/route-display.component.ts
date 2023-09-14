@@ -27,7 +27,7 @@ export class RouteDisplayComponent implements OnInit {
   currentRequest!: RouteRequest;
   currentObjId!: string;
   savedRouteIndexes!: number[];
-  currentYear = new Date().getFullYear;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private routeSearchSvc: RouteSearchService,
