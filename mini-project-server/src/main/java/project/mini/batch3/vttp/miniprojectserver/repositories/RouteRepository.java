@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 
+import project.mini.batch3.vttp.miniprojectserver.exceptions.AppException;
 import project.mini.batch3.vttp.miniprojectserver.models.RouteRequestDocument;
 import project.mini.batch3.vttp.miniprojectserver.models.RouteRequestDocumentWithId;
 import project.mini.batch3.vttp.miniprojectserver.models.routeRequest.RouteRequest;
@@ -71,14 +73,23 @@ public class RouteRepository {
     @Transactional
     public ObjectId saveRouteDocument(RouteRequestDocument routeReq) {
         Document doc = Document.parse(new Gson().toJson(routeReq).toString());
-        Document newDoc = mongoTemplate.insert(doc, C_ROUTES);
-        return newDoc.getObjectId(F_ID);
+        try {
+            Document newDoc = mongoTemplate.insert(doc, C_ROUTES);
+            return newDoc.getObjectId(F_ID);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AppException("saveRouteDocument fail", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public boolean saveRouteId(String routeId, String userId) {
-        Integer iResult = jdbcTemplate.update(insertRouteIdByUserId, userId, routeId);
-
-        return iResult > 0;
+        try {
+            Integer iResult = jdbcTemplate.update(insertRouteIdByUserId, userId, routeId);
+            return iResult > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AppException("saveRouteId fail", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public void updateRouteIndex(String id, Integer index) {
@@ -91,11 +102,11 @@ public class RouteRepository {
 
     public List<RouteRequestDocumentWithId> getSavedRouteRequests(List<String> requestIds) {
         List<ObjectId> requestObjIds = new ArrayList<>();
-        for(String id : requestIds) {
+        for (String id : requestIds) {
             ObjectId objId = new ObjectId(id);
             requestObjIds.add(objId);
         }
-        
+
         AggregationOperation projectionOp = context -> {
             Document toString = new Document("$toString", "$_id");
             Document projectFields = new Document("_id", toString).append(F_ROUTEREQUESTS, 1).append(F_INDEXES, 1);
@@ -104,10 +115,10 @@ public class RouteRepository {
             return project;
         };
         Aggregation aggregation = Aggregation.newAggregation(
-            Aggregation.match(Criteria.where(F_ID).in(requestObjIds)),
-            projectionOp
-        );
-        List<RouteRequestDocumentWithId> result = mongoTemplate.aggregate(aggregation, C_ROUTES, RouteRequestDocumentWithId.class).getMappedResults();
+                Aggregation.match(Criteria.where(F_ID).in(requestObjIds)),
+                projectionOp);
+        List<RouteRequestDocumentWithId> result = mongoTemplate
+                .aggregate(aggregation, C_ROUTES, RouteRequestDocumentWithId.class).getMappedResults();
         return result;
     }
 
@@ -138,7 +149,7 @@ public class RouteRepository {
         Query query = new Query(Criteria.where(F_ID).is(new ObjectId(id)));
         RouteRequestDocumentWithId request = mongoTemplate.findOne(query, RouteRequestDocumentWithId.class, C_ROUTES);
 
-        if(request != null && request.getIndexes() != null && request.getIndexes().length == 0) {
+        if (request != null && request.getIndexes() != null && request.getIndexes().length == 0) {
             mongoTemplate.remove(query, RouteRequestDocumentWithId.class, C_ROUTES);
             return true;
         }
