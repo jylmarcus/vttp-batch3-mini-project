@@ -20,6 +20,10 @@ h2 {
   margin-bottom: 1rem;
 }
 
+.attribution {
+  font-size: smaller;
+}
+
 .routeQuery {
   font-size: larger;
   margin-bottom: 1rem;
