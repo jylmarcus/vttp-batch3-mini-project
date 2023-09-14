@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { RouteTravelMode } from 'src/app/models/routeRequest/route-travel-mode';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-route-display',
@@ -30,7 +31,7 @@ export class RouteDisplayComponent implements OnInit {
 
   constructor(
     private routeSearchSvc: RouteSearchService,
-    private location: Location,
+    private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -94,6 +95,7 @@ export class RouteDisplayComponent implements OnInit {
         .updateSavedIndex(this.currentObjId, index)
         .subscribe();
     }
+    this.snackBar.open('Route saved!', 'Dismiss', {duration: 3000});
   }
 
   deleteRoute(i: number) {
