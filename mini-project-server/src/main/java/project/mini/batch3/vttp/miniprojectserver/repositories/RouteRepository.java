@@ -61,6 +61,7 @@ public class RouteRepository {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Goog-Api-Key", API_KEY);
         headers.set("X-Goog-FieldMask", FIELD_MASK);
+        headers.set("Referer", "https://transit-production.up.railway.app");
 
         HttpEntity<String> request = new HttpEntity<String>(new Gson().toJson(routeReq).toString(), headers);
         String response = rest.postForObject(SVC_HOST + SVC_PATH, request, String.class);
