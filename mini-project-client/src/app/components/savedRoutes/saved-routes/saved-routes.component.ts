@@ -28,6 +28,7 @@ export class SavedRoutesComponent implements OnInit {
     });
   }
 
+  // for display purpose
   convertPlaceIdsToNames() {
     for(let savedRequest of this.savedRequests) {
       const originPlaceId = savedRequest.request.origin.placeId;
@@ -43,6 +44,7 @@ export class SavedRoutesComponent implements OnInit {
     }
   }
 
+  // pass the request details to display component
   showSavedRoutes(index: number) {
     //savedRequests[index] is the main target
     this.router.navigate(['routes/results'], {

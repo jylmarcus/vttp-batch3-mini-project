@@ -70,6 +70,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // pass request details to display component
   submitForm() {
     this.router.navigate(['routes/results'], {
       queryParams: {
@@ -84,7 +85,6 @@ export class SearchComponent implements OnInit, AfterViewInit {
         flag: this.departureArrivalFlag,
         travelMode: this.travelMode.valueOf(),
         computeAlternativeRoutes: this.computeAlternativeRoutes,
-        //todo: add in travelmode, add in computeAlternativeRoutes
       },
     });
   }

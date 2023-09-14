@@ -32,11 +32,12 @@ public class RouteSearchController {
     @GetMapping(path = "/routeSearch", produces = "application/json")
     // initial params: origin, destination, departure date, departure time
     // default params: routetravelmode + routingpreference,
-    // computeAlternativeRoutes: false,
+    // computeAlternativeRoutes: true,
     // units: "METRIC"
     // params to not touch because not in scope: languageCode, regionCode,
     // routeModifiers, trafficModel, transitPreferences.allowedtravelmodes,
     // transitpreferences.transitRoutingPreference
+    // ran out of time to implement controls for default params, arrival time
     public ResponseEntity<String> queryRoutes(@RequestParam String origin,
             @RequestParam String destination,
             @RequestParam(required = false) RouteTravelMode travelMode,
@@ -71,7 +72,7 @@ public class RouteSearchController {
             String requests = travelSvc.getSavedRoutes(userId);
             return ResponseEntity.ok().body(requests);
         } catch (Exception ex) {
-            return ResponseEntity.status(404).body("Not found");
+            return ResponseEntity.status(404).body(ex.getMessage());
         }
     }
 

@@ -36,17 +36,25 @@ export class RouteDisplayComponent implements OnInit {
     private router: Router
   ) {}
 
+  // create the request from query params
+  // send request to svc
+  // compute arrivaltimes for display
+  // compute traveltimes for display
   ngOnInit(): void {
+
     this.originName = this.route.snapshot.queryParams['originName']!;
     this.destinationName = this.route.snapshot.queryParams['destinationName']!;
+
     if (this.route.snapshot.queryParams['flag'] == "true") {
       this.departureTime = this.route.snapshot.queryParams['time']!;
     } else {
       this.arrivalTime = this.route.snapshot.queryParams['time']!;
     }
+
     this.travelMode = <RouteTravelMode>(
       this.route.snapshot.queryParams['travelMode']!
     );
+
     this.currentRequest = {
       origin: { placeId: this.route.snapshot.queryParams['origin']! },
       destination: { placeId: this.route.snapshot.queryParams['destination']! },
@@ -63,6 +71,7 @@ export class RouteDisplayComponent implements OnInit {
       ),
       units: 'METRIC',
     };
+
     this.routeSearchSvc.findRoute(this.currentRequest).subscribe({
       next: (result) => {
         this.routes = result.routes;
@@ -74,6 +83,7 @@ export class RouteDisplayComponent implements OnInit {
         this.totalTravelTimes = this.routeSearchSvc.computeTotalTravelTimes(this.travelTimes);
       },
     });
+
     if(this.route.snapshot.queryParams['currentObjId'] != undefined || this.route.snapshot.queryParams['currentObjId'] != null) {
       this.currentObjId = this.route.snapshot.queryParams['currentObjId'];
     }
@@ -81,8 +91,10 @@ export class RouteDisplayComponent implements OnInit {
     if(this.route.snapshot.queryParams['indexes'] != undefined || this.route.snapshot.queryParams['indexes'] != null) {
       this.savedRouteIndexes = this.route.snapshot.queryParams['indexes'];
     }
-  }
+  };
 
+  // set currentObjId to enable saving index in same request
+  // only used if coming from routes/search
   saveRoute(index: number) {
     if (this.currentObjId == undefined) {
       this.routeSearchSvc.saveRoute(this.currentRequest, index).subscribe({
@@ -98,6 +110,7 @@ export class RouteDisplayComponent implements OnInit {
     this.snackBar.open('Route saved!', 'Dismiss', {duration: 3000});
   }
 
+  // only used if coming from routes/savedRoute
   deleteRoute(i: number) {
     this.routeSearchSvc.deleteSavedRoute(this.currentObjId, this.savedRouteIndexes[i]).subscribe((data) => {
       this.savedRouteIndexes = [...this.savedRouteIndexes.splice(i, 1)];

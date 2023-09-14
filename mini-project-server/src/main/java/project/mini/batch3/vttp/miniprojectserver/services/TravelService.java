@@ -27,6 +27,8 @@ public class TravelService {
         return routeRepo.queryRoutes(request);
     }
 
+    // save request in mongodb, obtain _id
+    // save user_id and _id in mysql
     @Transactional(rollbackFor = { AppException.class, DataAccessException.class })
     public String saveRoute(RouteRequestDocument routeRequestDocument, String userId) throws AppException {
         String objId = null;
@@ -51,34 +53,21 @@ public class TravelService {
         routeRepo.updateRouteIndex(userId, index);
     }
 
+    // get _id s from mysql
+    // query for requests and indexes using _id s in mongodb
     public String getSavedRoutes(String userId) {
-        // method to get objIds from sql
         Optional<List<String>> requestIdsOpt = routeRepo.getUserSavedRoutes(userId);
         if (requestIdsOpt.isEmpty()) {
             throw new AppException("You do not have any saved routes", HttpStatus.NOT_FOUND);
         }
 
         List<RouteRequestDocumentWithId> requestDocuments = routeRepo.getSavedRouteRequests(requestIdsOpt.get());
-        // every route request produces a response
-        /*StringBuilder routeQueries = new StringBuilder();
-        routeQueries.append("[");
-        for (RouteRequestDocument doc : requestDocuments) {
-            routeQueries.append("{\"request\": ");
-            routeQueries.append(new Gson().toJson(doc.getRouteRequest()).toString());
-            routeQueries.append(", \"response\": ");
-            String response = routeRepo.queryRoutes(doc.getRouteRequest());
-            routeQueries.append(response);
-            routeQueries.append(", \"indexes\": ");
-            Integer[] indexes = doc.getIndexes();
-            routeQueries.append(Arrays.toString(indexes));
-            routeQueries.append("},");
-        }
-        routeQueries.append("]"); */
-
         
         return new Gson().toJson(requestDocuments);
     }
 
+    // delete index of indexes in mongodb
+    // if indexes is empty, delete user_id and _id from mysql
     @Transactional(rollbackFor = {AppException.class, DataAccessException.class})
     public void deleteRoute(String id, Integer index, String userId) {
         try{

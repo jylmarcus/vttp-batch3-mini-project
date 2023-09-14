@@ -57,6 +57,8 @@ public class RouteRepository {
     private static final String insertRouteIdByUserId = "insert into saved_routes (user_id, RouteRequestId) values (?, ?);";
     private static final String deleteRouteByUserIdAndObjId = "delete from saved_routes where user_id = ? and RouteRequestId = ?";
 
+    // send request for route to google routes api
+    // response is an array of routes
     public String queryRoutes(RouteRequest routeReq) {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -70,6 +72,10 @@ public class RouteRepository {
         return response;
     }
 
+    // save request and response index mongodb
+    // db.collection.insert({RouteRequest: ..., indexes: ...})
+    // return _id to save in mysql
+    // request _id are unique to each user
     @Transactional
     public ObjectId saveRouteDocument(RouteRequestDocument routeReq) {
         Document doc = Document.parse(new Gson().toJson(routeReq).toString());
@@ -82,6 +88,7 @@ public class RouteRepository {
         }
     }
 
+    // insert new row into sql user_id and _id
     public boolean saveRouteId(String routeId, String userId) {
         try {
             Integer iResult = jdbcTemplate.update(insertRouteIdByUserId, userId, routeId);
@@ -92,6 +99,7 @@ public class RouteRepository {
         }
     }
 
+    // update indexes of response in mongo document 
     public void updateRouteIndex(String id, Integer index) {
         Query query = new Query().addCriteria(Criteria.where(F_ID).is(new ObjectId(id)));
         Update update = new Update().addToSet(F_INDEXES, index);
@@ -100,6 +108,7 @@ public class RouteRepository {
         mongoTemplate.findAndModify(query, update, options, RouteRequestDocument.class, C_ROUTES);
     }
 
+    // retrieve requests from mongodb
     public List<RouteRequestDocumentWithId> getSavedRouteRequests(List<String> requestIds) {
         List<ObjectId> requestObjIds = new ArrayList<>();
         for (String id : requestIds) {
@@ -122,6 +131,7 @@ public class RouteRepository {
         return result;
     }
 
+    // retrieve _id to query for requests in mongodb
     public Optional<List<String>> getUserSavedRoutes(String userId) {
         Optional<List<String>> optSavedRoutes = Optional.empty();
 
@@ -136,7 +146,7 @@ public class RouteRepository {
         return optSavedRoutes;
     }
 
-    // add method to remove saved routes
+    // delete index of request
     @Transactional
     public void deleteRouteIndex(String id, Integer indexToRemove) {
         Query query = new Query(Criteria.where(F_ID).is(new ObjectId(id)));
@@ -144,6 +154,7 @@ public class RouteRepository {
         mongoTemplate.updateFirst(query, update, RouteRequestDocumentWithId.class, C_ROUTES);
     }
 
+    // if indexes is empty, delete request document
     @Transactional
     public boolean checkAndDeleteIfEmpty(String id) {
         Query query = new Query(Criteria.where(F_ID).is(new ObjectId(id)));
@@ -156,6 +167,7 @@ public class RouteRepository {
         return false;
     }
 
+    // when request document is deleted, remove _id from user
     @Transactional
     public boolean deleteRouteFromUser(String id, String userId) {
         Integer dResult = jdbcTemplate.update(deleteRouteByUserIdAndObjId, userId, id);
