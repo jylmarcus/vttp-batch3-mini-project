@@ -79,12 +79,13 @@ public class RouteSearchController {
     public ResponseEntity<String> saveRoute(@RequestBody RouteRequestDocument request, Authentication authentication) {
         UserDto user = (UserDto)authentication.getPrincipal();
         String userId = user.getId();
+        System.out.println(userId);
         try {
             String objId = travelSvc.saveRoute(request, userId);
             String resp = "{\"objId\": \"" + objId + "\"}";
             return ResponseEntity.status(HttpStatus.CREATED).body(resp);
         } catch (Exception ex) {
-            return ResponseEntity.status(400).body("Unable to save route");
+            return ResponseEntity.status(400).body(ex.getMessage());
         }
     }
 
@@ -95,7 +96,7 @@ public class RouteSearchController {
             String resp = "{\"message\": \"Route saved successfully\"}";
             return ResponseEntity.ok().body(resp);
         } catch (Exception ex) {
-            return ResponseEntity.status(400).body("Unable to save route");
+            return ResponseEntity.status(400).body(ex.getMessage());
         }
     }
 
