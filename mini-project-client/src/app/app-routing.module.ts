@@ -7,12 +7,13 @@ import { RegisterComponent } from './components/register/register/register.compo
 import { LogoutComponent } from './components/logout/logout/logout.component';
 import { SavedRoutesComponent } from './components/savedRoutes/saved-routes/saved-routes.component';
 import { HomeComponent } from './components/home/home/home.component';
+import { authGuard } from './auth.guard';
 
 const routes: Routes = [
   {path: '', component:HomeComponent},
-  {path: 'routes/search', component: SearchComponent},
-  {path: 'routes/results', component: RouteDisplayComponent},
-  {path: 'routes/savedRoutes', component: SavedRoutesComponent},
+  {path: 'routes/search', component: SearchComponent, canActivate: [authGuard]},
+  {path: 'routes/results', component: RouteDisplayComponent, canActivate: [authGuard]},
+  {path: 'routes/savedRoutes', component: SavedRoutesComponent, canActivate:[authGuard]},
   {path: 'login', component: LoginComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'logout', component: LogoutComponent}
